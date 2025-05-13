@@ -50,7 +50,7 @@ public class GameService {
             }
         }
 
-        currentGame = new GameState(board);
+        currentGame = new GameState(board, GameState.GameStatus.IN_PROGRESS);
         return currentGame;
 
     }
@@ -60,13 +60,18 @@ public class GameService {
 
         GameState.Cell cell = currentGame.getCell(row,col);
 
+        if (cell.hasMine) {
+            currentGame.setStatus(GameState.GameStatus.LOST);
+            return currentGame;
+        }
+
         if (cell.state == GameState.CellState.REVEALED || cell.state == GameState.CellState.FLAGGED) {
             return currentGame;
         }
 
         cell.state = GameState.CellState.REVEALED;
 
-        if (cell.adjacentMines == 0 && !cell.hasMine) {
+        if (cell.adjacentMines == 0) {
             revealAdjacentZeros(row, col);
         }
 

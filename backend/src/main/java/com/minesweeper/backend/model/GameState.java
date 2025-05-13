@@ -7,6 +7,10 @@ public class GameState {
         HIDDEN, REVEALED, FLAGGED
     }
 
+    public enum GameStatus {
+        IN_PROGRESS, LOST, WON
+    }
+
     public static class Cell {
         public boolean hasMine;
         public int adjacentMines;
@@ -20,9 +24,11 @@ public class GameState {
     }
 
     private List<List<Cell>> board;
+    private GameStatus status;
 
-    public GameState(List<List<Cell>> board) {
+    public GameState(List<List<Cell>> board, GameStatus status) {
         this.board = board;
+        this.status = status;
     }
 
     public List<List<Cell>> getBoard() {
@@ -31,5 +37,13 @@ public class GameState {
 
     public Cell getCell(int row, int column) {
         return board.get(row).get(column);
+    }
+
+    public GameStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(GameStatus status) {
+        this.status = status;
     }
 }
