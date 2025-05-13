@@ -78,10 +78,20 @@ public class GameService {
     public GameState revealCell(int row, int col) {
         if (currentGame == null) return null;
 
+        int rows = currentGame.getBoard().size();
+        int cols = currentGame.getBoard().get(0).size();
+
         GameState.Cell cell = currentGame.getCell(row,col);
 
         if (cell.hasMine) {
             currentGame.setStatus(GameState.GameStatus.LOST);
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    if(currentGame.getCell(r,c).hasMine){
+                        currentGame.getCell(r,c).setState(GameState.CellState.REVEALED);
+                    }
+                }
+            }
             return currentGame;
         }
 
@@ -100,9 +110,6 @@ public class GameService {
         if (cell.adjacentMines == 0) {
             revealNeighbors(row, col, true);
         }
-
-        int rows = currentGame.getBoard().size();
-        int cols = currentGame.getBoard().get(0).size();
 
         if(currentGame.getClearedCells() == rows * cols - mines){
             currentGame.setStatus(GameState.GameStatus.WON);

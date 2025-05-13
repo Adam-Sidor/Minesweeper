@@ -17,9 +17,9 @@ type Board = Cell[][];
 function App() {
   const [board, setBoard] = useState<Board>([]);
   const [gameStatus, setGameStatus] = useState<GameStatus>('IN_PROGRESS')
-  const rows = 8;
-  const cols = 8;
-  const mines = 10;
+  const rows = 10;
+  const cols = 25;
+  const mines = 50;
 
   const startGame = async () => {
     try {
@@ -73,7 +73,7 @@ function App() {
                 key={c}
                 onClick={() => revealCell(r, c)}
                 onContextMenu={(e) => {
-                  e.preventDefault(); // zapobiega domyślnemu menu kontekstowemu
+                  e.preventDefault();
                   flagCell(r, c);
                 }}
                 disabled={gameStatus !== 'IN_PROGRESS'}
@@ -84,9 +84,9 @@ function App() {
                   backgroundColor: cell.state === 'REVEALED' ? '#ddd' : '#999',
                 }}
               >
-                {cell.state === 'REVEALED' && cell.hasMine ? '💣' :
+                { cell.hasMine && gameStatus === 'LOST' ? '💣' :
                   cell.state === 'REVEALED' && cell.adjacentMines > 0 ? cell.adjacentMines :
-                    cell.state === 'FLAGGED' ? 'F' : ''}
+                    cell.state === 'FLAGGED' ? '🚩' : ''}
               </button>
             ))}
           </div>
