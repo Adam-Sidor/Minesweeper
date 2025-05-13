@@ -4,19 +4,20 @@ import com.minesweeper.backend.model.GameState;
 import com.minesweeper.backend.service.GameService;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/game")
 public class GameController {
 
     private final GameService gameService = new GameService();
 
-    @GetMapping("/start")
-    public GameState startNewGame() {
-        return gameService.startNewGame(8, 8, 10);
+    @PostMapping("/start")
+    public GameState startNewGame(@RequestBody StartRequest request) {
+        return gameService.startNewGame(request.rows, request.cols, request.mines);
     }
 
-    @PostMapping("/click")
-    public GameState click(@RequestBody ClickRequest request) {
+    @PostMapping("/reveal")
+    public GameState click(@RequestBody RevealRequest request) {
         return gameService.revealCell(request.row, request.col);
     }
 

@@ -40,7 +40,7 @@ public class GameService {
                         for (int j = -1; j <= 1; j++) {
                             int nr = r + i;
                             int nc = c + j;
-                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board.get(r).get(c).hasMine) {
+                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board.get(nr).get(nc).hasMine) {
                                 count++;
                             }
                         }
