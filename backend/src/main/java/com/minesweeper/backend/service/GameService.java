@@ -1,0 +1,53 @@
+package com.minesweeper.backend.service;
+
+import com.minesweeper.backend.model.GameState;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class GameService {
+
+    public GameState startNewGame(int rows, int cols, int mines) {
+        List<List<GameState.Cell>> board = new ArrayList<>();
+
+        for (int i = 0; i < rows; i++) {
+            List<GameState.Cell> row = new ArrayList<>();
+            for (int j = 0; j < cols; j++) {
+                row.add(new GameState.Cell(false, 0));
+            }
+            board.add(row);
+        }
+
+        Random random = new Random();
+        int placed = 0;
+        while (placed < mines) {
+            int r = random.nextInt(rows);
+            int c = random.nextInt(cols);
+            if (!board.get(r).get(c).hasMine) {
+                board.get(r).get(c).hasMine = true;
+                placed++;
+            }
+        }
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (!board.get(r).get(c).hasMine) {
+                    int count = 0;
+                    for (int i = -1; i <= 1; i++) {
+                        for (int j = -1; j <= 1; j++) {
+                            int nr = r + i;
+                            int nc = c + j;
+                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board.get(nr).get(nc).hasMine) {
+                                count++;
+                            }
+                        }
+                    }
+                    board.get(r).get(c).adjacentMines = count;
+                }
+            }
+        }
+
+        return new GameState(board);
+    }
+}
