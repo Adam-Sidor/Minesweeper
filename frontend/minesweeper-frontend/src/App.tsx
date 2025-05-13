@@ -21,9 +21,24 @@ function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>();
   const [remainingMines, setRemainingMines] = useState<RemainingMines>();
   const [time, setTime] = useState(0);
-  const rows = 10;
-  const cols = 25;
-  const mines = 50;
+  const rows = 8;
+  const cols = 8;
+  const mines = 10;
+
+  const getColor = (n: number): string => {
+  switch (n) {
+    case 1: return 'blue';
+    case 2: return 'green';
+    case 3: return 'red';
+    case 4: return 'darkblue';
+    case 5: return 'brown';
+    case 6: return 'turquoise';
+    case 7: return 'black';
+    case 8: return 'gray';
+    default: return 'black';
+  }
+};
+
 
   const startGame = async () => {
     try {
@@ -80,7 +95,10 @@ function App() {
   return (
     <div className="App">
       <h1>Minesweeper</h1>
-      <button onClick={startGame}>Restart</button>
+      <button onClick={startGame}>
+        {gameStatus === 'IN_PROGRESS' ? '😄' : 
+        gameStatus === 'LOST' ? '💣' : '😎'}
+        </button>
       <div>Mines left: {remainingMines}</div>
       <div>Time: {time} sec</div>
       <div style={{ display: 'inline-block', marginTop: '10px' }}>
@@ -103,8 +121,11 @@ function App() {
                 }}
               >
                 {cell.hasMine && gameStatus === 'LOST' ? '💣' :
-                  cell.state === 'REVEALED' && cell.adjacentMines > 0 ? cell.adjacentMines :
-                    cell.state === 'FLAGGED' ? '🚩' : ''}
+                  cell.state === 'REVEALED' && cell.adjacentMines > 0 ? (
+                    <span style={{ color: getColor(cell.adjacentMines) }}>
+                      {cell.adjacentMines}
+                    </span>
+                  ) : cell.state === 'FLAGGED' ? '🚩' : ''}
               </button>
             ))}
           </div>
