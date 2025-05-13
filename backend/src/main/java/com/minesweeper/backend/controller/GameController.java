@@ -4,6 +4,9 @@ import com.minesweeper.backend.model.GameState;
 import com.minesweeper.backend.service.GameService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/game")
@@ -28,7 +31,10 @@ public class GameController {
 
     //for some debugging - will be removed later
     @GetMapping("/showdata")
-    public int showData() {
-        return gameService.getCurrentGame().getClearedCells();
+    public Map<String, String> showData() {
+        Map<String, String> response = new HashMap<>();
+        response.put("clearedCells", Integer.toString(gameService.getCurrentGame().getClearedCells()));
+        response.put("elapsedTime", Double.toString(gameService.getCurrentGame().getElapsedTime()));
+        return response;
     }
 }

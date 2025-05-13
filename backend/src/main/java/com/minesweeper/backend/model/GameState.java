@@ -36,11 +36,23 @@ public class GameState {
     private int clearedCells;
     private int remainingMines;
 
+    private long startTime;
+    private long endTime;
+
     public GameState(List<List<Cell>> board, GameStatus status, int remainingMines) {
         this.board = board;
         this.status = status;
         clearedCells = 0;
         this.remainingMines = remainingMines;
+        startTime = System.currentTimeMillis();
+    }
+
+    public double getElapsedTime() {
+        return endTime > 0 ? (endTime - startTime) / 1000.0 : (System.currentTimeMillis() - startTime) / 1000.0;
+    }
+
+    public void stopTimer() {
+        endTime = System.currentTimeMillis();
     }
 
     public List<List<Cell>> getBoard() {

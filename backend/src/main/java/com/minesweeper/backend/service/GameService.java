@@ -86,14 +86,7 @@ public class GameService {
         GameState.Cell cell = currentGame.getCell(row,col);
 
         if (cell.hasMine) {
-            currentGame.setStatus(GameState.GameStatus.LOST);
-            for (int r = 0; r < rows; r++) {
-                for (int c = 0; c < cols; c++) {
-                    if(currentGame.getCell(r,c).hasMine){
-                        currentGame.getCell(r,c).setState(GameState.CellState.REVEALED);
-                    }
-                }
-            }
+            gameOver(rows, cols);
             return currentGame;
         }
 
@@ -132,7 +125,7 @@ public class GameService {
                 if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
                     GameState.Cell neighbor = currentGame.getCell(nr,nc);
                     if(!ignoreMines && neighbor.hasMine && neighbor.state != GameState.CellState.FLAGGED) {
-                        currentGame.setStatus(GameState.GameStatus.LOST);
+                        gameOver(rows, cols);
                     }
                     if (neighbor.state == GameState.CellState.HIDDEN && !neighbor.hasMine) {
                         neighbor.state = GameState.CellState.REVEALED;
@@ -141,6 +134,20 @@ public class GameService {
                             revealNeighbors(nr, nc, ignoreMines);
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private void gameOver(int rows, int cols) {
+        currentGame.setStatus(GameState.GameStatus.LOST);
+
+        currentGame.stopTimer();
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if(currentGame.getCell(r,c).hasMine){
+                    currentGame.getCell(r,c).setState(GameState.CellState.REVEALED);
                 }
             }
         }

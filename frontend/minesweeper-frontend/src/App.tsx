@@ -18,8 +18,9 @@ type RemainingMines = 0;
 
 function App() {
   const [board, setBoard] = useState<Board>([]);
-  const [gameStatus, setGameStatus] = useState<GameStatus>('IN_PROGRESS');
+  const [gameStatus, setGameStatus] = useState<GameStatus>();
   const [remainingMines, setRemainingMines] = useState<RemainingMines>();
+  const [time, setTime] = useState(0);
   const rows = 10;
   const cols = 25;
   const mines = 50;
@@ -34,6 +35,7 @@ function App() {
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
       setRemainingMines(res.data.remainingMines);
+      setTime(0);
     } catch (error) {
       console.error("Error starting the game:", error);
     }
@@ -63,13 +65,24 @@ function App() {
   };
 
   useEffect(() => {
-    startGame();
-  }, []);
+    let interval: NodeJS.Timeout | null = null;
+
+    if (gameStatus === 'IN_PROGRESS') {
+      interval = setInterval(() => {
+        setTime(prevTime => prevTime + 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [gameStatus]);
   return (
     <div className="App">
       <h1>Minesweeper</h1>
       <button onClick={startGame}>Restart</button>
       <div>Mines left: {remainingMines}</div>
+      <div>Time: {time} sec</div>
       <div style={{ display: 'inline-block', marginTop: '10px' }}>
         {board.map((row, r) => (
           <div key={r} style={{ display: 'flex' }}>
@@ -89,7 +102,7 @@ function App() {
                   backgroundColor: cell.state === 'REVEALED' ? '#ddd' : '#999',
                 }}
               >
-                { cell.hasMine && gameStatus === 'LOST' ? '💣' :
+                {cell.hasMine && gameStatus === 'LOST' ? '💣' :
                   cell.state === 'REVEALED' && cell.adjacentMines > 0 ? cell.adjacentMines :
                     cell.state === 'FLAGGED' ? '🚩' : ''}
               </button>
