@@ -52,7 +52,7 @@ public class GameService {
             }
         }
 
-        currentGame = new GameState(board, GameState.GameStatus.IN_PROGRESS);
+        currentGame = new GameState(board, GameState.GameStatus.IN_PROGRESS,mines);
         return currentGame;
 
     }
@@ -67,9 +67,11 @@ public class GameService {
             }
             case FLAGGED -> {
                 cell.setState(GameState.CellState.HIDDEN);
+                currentGame.incrementRemainingMines();
             }
             case HIDDEN -> {
                 cell.setState(GameState.CellState.FLAGGED);
+                currentGame.decrementRemainingMines();
             }
         }
         return currentGame;

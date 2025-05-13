@@ -34,11 +34,13 @@ public class GameState {
     private List<List<Cell>> board;
     private GameStatus status;
     private int clearedCells;
+    private int remainingMines;
 
-    public GameState(List<List<Cell>> board, GameStatus status) {
+    public GameState(List<List<Cell>> board, GameStatus status, int remainingMines) {
         this.board = board;
         this.status = status;
         clearedCells = 0;
+        this.remainingMines = remainingMines;
     }
 
     public List<List<Cell>> getBoard() {
@@ -63,5 +65,14 @@ public class GameState {
 
     public void incrementClearedCells() {
         this.clearedCells += 1;
+    }
+    public int getRemainingMines() {
+        return remainingMines;
+    }
+    public void incrementRemainingMines() {
+        this.remainingMines += 1;
+    }
+    public void decrementRemainingMines() {
+        this.remainingMines -= 1;
     }
 }

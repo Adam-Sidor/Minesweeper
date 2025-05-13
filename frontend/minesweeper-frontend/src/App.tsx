@@ -14,9 +14,12 @@ interface Cell {
 
 type Board = Cell[][];
 
+type RemainingMines = 0;
+
 function App() {
   const [board, setBoard] = useState<Board>([]);
-  const [gameStatus, setGameStatus] = useState<GameStatus>('IN_PROGRESS')
+  const [gameStatus, setGameStatus] = useState<GameStatus>('IN_PROGRESS');
+  const [remainingMines, setRemainingMines] = useState<RemainingMines>();
   const rows = 10;
   const cols = 25;
   const mines = 50;
@@ -30,6 +33,7 @@ function App() {
       });
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
+      setRemainingMines(res.data.remainingMines);
     } catch (error) {
       console.error("Error starting the game:", error);
     }
@@ -55,6 +59,7 @@ function App() {
     const res = await axios.post('http://localhost:8080/api/game/flag', { row, col });
     setBoard(res.data.board);
     setGameStatus(res.data.status);
+    setRemainingMines(res.data.remainingMines);
   };
 
   useEffect(() => {
@@ -64,7 +69,7 @@ function App() {
     <div className="App">
       <h1>Minesweeper</h1>
       <button onClick={startGame}>Restart</button>
-      <br></br>
+      <div>Mines left: {remainingMines}</div>
       <div style={{ display: 'inline-block', marginTop: '10px' }}>
         {board.map((row, r) => (
           <div key={r} style={{ display: 'flex' }}>
