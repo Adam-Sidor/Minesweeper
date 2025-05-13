@@ -12,11 +12,6 @@ interface Cell {
   state: CellState;
 }
 
-interface GameState{
-  board: Cell[][];
-  status: GameStatus;
-}
-
 type Board = Cell[][];
 
 function App() {

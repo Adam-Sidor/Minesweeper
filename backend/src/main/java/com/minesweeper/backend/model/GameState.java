@@ -25,10 +25,12 @@ public class GameState {
 
     private List<List<Cell>> board;
     private GameStatus status;
+    private int clearedCells;
 
     public GameState(List<List<Cell>> board, GameStatus status) {
         this.board = board;
         this.status = status;
+        clearedCells = 0;
     }
 
     public List<List<Cell>> getBoard() {
@@ -45,5 +47,13 @@ public class GameState {
 
     public void setStatus(GameStatus status) {
         this.status = status;
+    }
+
+    public int getClearedCells() {
+        return clearedCells;
+    }
+
+    public void incrementClearedCells() {
+        this.clearedCells += 1;
     }
 }

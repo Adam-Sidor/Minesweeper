@@ -9,9 +9,11 @@ import java.util.Random;
 public class GameService {
 
     private GameState currentGame;
+    private int mines;
 
     public GameState startNewGame(int rows, int cols, int mines) {
         List<List<GameState.Cell>> board = new ArrayList<>();
+        this.mines = mines;
 
         for (int i = 0; i < rows; i++) {
             List<GameState.Cell> row = new ArrayList<>();
@@ -70,9 +72,17 @@ public class GameService {
         }
 
         cell.state = GameState.CellState.REVEALED;
+        currentGame.incrementClearedCells();
 
         if (cell.adjacentMines == 0) {
             revealAdjacentZeros(row, col);
+        }
+
+        int rows = currentGame.getBoard().size();
+        int cols = currentGame.getBoard().get(0).size();
+
+        if(currentGame.getClearedCells() == rows * cols - mines){
+            currentGame.setStatus(GameState.GameStatus.WON);
         }
 
         return currentGame;
@@ -92,6 +102,7 @@ public class GameService {
 
                     if (neighbor.state == GameState.CellState.HIDDEN && !neighbor.hasMine) {
                         neighbor.state = GameState.CellState.REVEALED;
+                        currentGame.incrementClearedCells();
                         if (neighbor.adjacentMines == 0) {
                             revealAdjacentZeros(nr, nc);
                         }
