@@ -28,4 +28,8 @@ public class GameState {
     public List<List<Cell>> getBoard() {
         return board;
     }
+
+    public Cell getCell(int row, int column) {
+        return board.get(row).get(column);
+    }
 }
