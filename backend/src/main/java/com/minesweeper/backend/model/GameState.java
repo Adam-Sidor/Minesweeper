@@ -21,6 +21,14 @@ public class GameState {
             this.adjacentMines = adjacentMines;
             this.state = CellState.HIDDEN;
         }
+
+        public CellState getState() {
+            return state;
+        }
+
+        public void setState(CellState state) {
+            this.state = state;
+        }
     }
 
     private List<List<Cell>> board;

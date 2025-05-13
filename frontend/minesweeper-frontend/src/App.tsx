@@ -24,10 +24,10 @@ function App() {
   const startGame = async () => {
     try {
       const res = await axios.post('http://localhost:8080/api/game/start', {
-      rows,
-      cols,
-      mines
-    });
+        rows,
+        cols,
+        mines
+      });
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
     } catch (error) {
@@ -36,7 +36,6 @@ function App() {
   };
 
   const revealCell = async (row: number, col: number) => {
-    //if(gameStatus !== 'IN_PROGRESS') return;
     try {
       const res = await axios.post('http://localhost:8080/api/game/reveal', { row, col });
       setBoard(res.data.board);
@@ -50,6 +49,12 @@ function App() {
     } catch (error) {
       console.error("Error revealing cell:", error);
     }
+  };
+
+  const flagCell = async (row: number, col: number) => {
+    const res = await axios.post('http://localhost:8080/api/game/flag', { row, col });
+    setBoard(res.data.board);
+    setGameStatus(res.data.status);
   };
 
   useEffect(() => {
@@ -66,7 +71,11 @@ function App() {
             {row.map((cell, c) => (
               <button
                 key={c}
-                onClick={() => revealCell (r, c)}
+                onClick={() => revealCell(r, c)}
+                onContextMenu={(e) => {
+                  e.preventDefault(); // zapobiega domyślnemu menu kontekstowemu
+                  flagCell(r, c);
+                }}
                 disabled={gameStatus !== 'IN_PROGRESS'}
                 style={{
                   width: 30,
@@ -76,7 +85,8 @@ function App() {
                 }}
               >
                 {cell.state === 'REVEALED' && cell.hasMine ? '💣' :
-                  cell.state === 'REVEALED' && cell.adjacentMines > 0 ? cell.adjacentMines : ''}
+                  cell.state === 'REVEALED' && cell.adjacentMines > 0 ? cell.adjacentMines :
+                    cell.state === 'FLAGGED' ? 'F' : ''}
               </button>
             ))}
           </div>

@@ -57,6 +57,24 @@ public class GameService {
 
     }
 
+    public GameState flagCell(int row, int col){
+        if (currentGame == null) return null;
+
+        GameState.Cell cell = currentGame.getCell(row,col);
+        switch (cell.state){
+            case REVEALED -> {
+                return currentGame;
+            }
+            case FLAGGED -> {
+                cell.setState(GameState.CellState.HIDDEN);
+            }
+            case HIDDEN -> {
+                cell.setState(GameState.CellState.FLAGGED);
+            }
+        }
+        return currentGame;
+    }
+
     public GameState revealCell(int row, int col) {
         if (currentGame == null) return null;
 

@@ -21,4 +21,9 @@ public class GameController {
         return gameService.revealCell(request.row, request.col);
     }
 
+    @PostMapping("/flag")
+    public GameState click(@RequestBody FlagRequest request) {
+        return gameService.flagCell(request.row, request.col);
+    }
+
 }
