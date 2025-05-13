@@ -85,7 +85,12 @@ public class GameService {
             return currentGame;
         }
 
-        if (cell.state == GameState.CellState.REVEALED || cell.state == GameState.CellState.FLAGGED) {
+        if(cell.state == GameState.CellState.REVEALED){
+            revealNeighbors(row, col, false);
+            return currentGame;
+        }
+
+        if (cell.state == GameState.CellState.FLAGGED) {
             return currentGame;
         }
 
@@ -93,7 +98,7 @@ public class GameService {
         currentGame.incrementClearedCells();
 
         if (cell.adjacentMines == 0) {
-            revealAdjacentZeros(row, col);
+            revealNeighbors(row, col, true);
         }
 
         int rows = currentGame.getBoard().size();
@@ -106,7 +111,7 @@ public class GameService {
         return currentGame;
     }
 
-    private void revealAdjacentZeros(int row, int col) {
+    private void revealNeighbors(int row, int col, boolean ignoreMines) {
         int rows = currentGame.getBoard().size();
         int cols = currentGame.getBoard().get(0).size();
 
@@ -117,16 +122,22 @@ public class GameService {
 
                 if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
                     GameState.Cell neighbor = currentGame.getCell(nr,nc);
-
+                    if(!ignoreMines && neighbor.hasMine && neighbor.state != GameState.CellState.FLAGGED) {
+                        currentGame.setStatus(GameState.GameStatus.LOST);
+                    }
                     if (neighbor.state == GameState.CellState.HIDDEN && !neighbor.hasMine) {
                         neighbor.state = GameState.CellState.REVEALED;
                         currentGame.incrementClearedCells();
                         if (neighbor.adjacentMines == 0) {
-                            revealAdjacentZeros(nr, nc);
+                            revealNeighbors(nr, nc, ignoreMines);
                         }
                     }
                 }
             }
         }
+    }
+
+    public GameState getCurrentGame() {
+        return currentGame;
     }
 }

@@ -26,4 +26,9 @@ public class GameController {
         return gameService.flagCell(request.row, request.col);
     }
 
+    //for some debugging - will be removed later
+    @GetMapping("/showdata")
+    public int showData() {
+        return gameService.getCurrentGame().getClearedCells();
+    }
 }
