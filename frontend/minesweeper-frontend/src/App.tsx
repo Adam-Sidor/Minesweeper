@@ -21,32 +21,29 @@ function App() {
   const [gameStatus, setGameStatus] = useState<GameStatus>();
   const [remainingMines, setRemainingMines] = useState<RemainingMines>();
   const [time, setTime] = useState(0);
-  const rows = 8;
-  const cols = 8;
-  const mines = 10;
+
+  const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
+  const [showCustomDifficultyMenu, setShowCustomDifficultyMenu] = useState(false);
+  const [gameConfig, setGameConfig] = useState({ rows: 8, cols: 8, mines: 10 });
 
   const getColor = (n: number): string => {
-  switch (n) {
-    case 1: return 'blue';
-    case 2: return 'green';
-    case 3: return 'red';
-    case 4: return 'darkblue';
-    case 5: return 'brown';
-    case 6: return 'turquoise';
-    case 7: return 'black';
-    case 8: return 'gray';
-    default: return 'black';
-  }
-};
+    switch (n) {
+      case 1: return 'blue';
+      case 2: return 'green';
+      case 3: return 'red';
+      case 4: return 'purple';
+      case 5: return 'yellow';
+      case 6: return 'orange';
+      case 7: return 'black';
+      case 8: return 'gray';
+      default: return 'black';
+    }
+  };
 
 
   const startGame = async () => {
     try {
-      const res = await axios.post('http://localhost:8080/api/game/start', {
-        rows,
-        cols,
-        mines
-      });
+      const res = await axios.post('http://localhost:8080/api/game/start', gameConfig);
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
       setRemainingMines(res.data.remainingMines);
@@ -95,10 +92,26 @@ function App() {
   return (
     <div className="App">
       <h1>Minesweeper</h1>
+      <button onClick={() => setShowDifficultyMenu(true)}>Poziom trudności</button>
+      {showDifficultyMenu &&
+        <div>
+          <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 9, cols: 9, mines: 10 }); setShowDifficultyMenu(false); }}>Łatwy</button>
+          <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 16, cols: 16, mines: 40 }); setShowDifficultyMenu(false); }}>Średni</button>
+          <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 16, cols: 30, mines: 99 }); setShowDifficultyMenu(false); }}>Trudny</button>
+          <button className='difficultyButton' onClick={() =>  setShowCustomDifficultyMenu(true) }>Własny</button>
+          {
+            showCustomDifficultyMenu && <div id='customDifficultyForm'>
+              <input type="number" onChange={e => setGameConfig({ ...gameConfig, rows: +e.target.value })} />
+              <input type="number" onChange={e => setGameConfig({ ...gameConfig, cols: +e.target.value })} />
+              <input type="number" onChange={e => setGameConfig({ ...gameConfig, mines: +e.target.value })} />
+              <button className='difficultyButton' onClick={() => { setShowCustomDifficultyMenu(false); setShowDifficultyMenu(false); }}>Zamknij</button>
+            </div>
+          }
+        </div>}
       <button onClick={startGame}>
-        {gameStatus === 'IN_PROGRESS' ? '😄' : 
-        gameStatus === 'LOST' ? '💣' : '😎'}
-        </button>
+        {gameStatus === 'IN_PROGRESS' ? '😄' :
+          gameStatus === 'LOST' ? '💣' : '😎'}
+      </button>
       <div>Mines left: {remainingMines}</div>
       <div>Time: {time} sec</div>
       <div style={{ display: 'inline-block', marginTop: '10px' }}>
