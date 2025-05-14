@@ -185,7 +185,23 @@ public class GameService {
     }
 
     public boolean checkTopScore(String difficulty) {
-        Random random = new Random();
-        return random.nextBoolean();
+        if(!difficulty.equals("custom")){
+            String tableName = switch (difficulty) {
+                case "easy" -> "easy_scores";
+                case "medium" -> "medium_scores";
+                case "hard" -> "hard_scores";
+                default -> throw new IllegalArgumentException("Nieznana trudność: " + difficulty);
+            };
+            String sql = "SELECT time FROM " + tableName + " ORDER BY time ASC LIMIT 10";
+
+            List<Double> topTimes = jdbcTemplate.queryForList(sql, Double.class);
+
+            if(topTimes.size() < 10){
+                return true;
+            }else{
+                return topTimes.get(9) > currentGame.getElapsedTime();
+            }
+        }
+        return false;
     }
 }

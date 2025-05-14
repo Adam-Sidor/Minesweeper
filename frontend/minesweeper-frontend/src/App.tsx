@@ -25,14 +25,13 @@ function App() {
 
   const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
   const [showCustomDifficultyMenu, setShowCustomDifficultyMenu] = useState(false);
-  const [gameConfig, setGameConfig] = useState({ rows: 8, cols: 8, mines: 10 });
+  const [gameConfig, setGameConfig] = useState({ rows: 8, cols: 8, mines: 10, difficulty: 'easy'});
 
   const [customRows, setCustomRows] = useState(8);
   const [customCols, setCustomCols] = useState(8);
   const [customMines, setCustomMines] = useState(10);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [difficulty, setDifficulty] = useState('');
   const [name, setName] = useState('');
 
   const startGame = useCallback(async () => {
@@ -43,6 +42,7 @@ function App() {
       setRemainingMines(res.data.remainingMines);
       setTime(0);
       setHasStarted(false);
+      setIsTopScore(false);
     } catch (error) {
       console.error("Error starting the game:", error);
     }
@@ -100,8 +100,8 @@ function App() {
       setErrorMessage('Liczba min musi być mniejsza niż liczba wszystkich pól.');
       return;
     }
-    localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows: customRows, cols: customCols, mines: customMines }));
-    setGameConfig({ rows: customRows, cols: customCols, mines: customMines });
+    localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows: customRows, cols: customCols, mines: customMines, diff: 'Custom'}));
+    setGameConfig({ rows: customRows, cols: customCols, mines: customMines, difficulty: 'Custom' });
 
     setErrorMessage('');
     setShowCustomDifficultyMenu(false);
@@ -109,10 +109,9 @@ function App() {
   };
 
   const setDifficultyLevel = (rows: number, cols: number, mines: number, difficulty: string) => {
-    setGameConfig({ rows, cols, mines });
+    setGameConfig({ rows, cols, mines, difficulty });
     setShowDifficultyMenu(false);
-    setDifficulty(difficulty);
-    localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows, cols, mines }));
+    localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows, cols, mines, difficulty}));
   }
 
   useEffect(() => {
@@ -197,7 +196,7 @@ function App() {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <button onClick={() => setScore(name, difficulty)}>Potwierdź</button>
+          <button onClick={() => setScore(name, gameConfig.difficulty)}>Potwierdź</button>
         </div>}
         <div className='game-over-banner'>
           {gameStatus === 'WON' && <div className="status-banner success">🎉 Gratulacje, wygrałeś!</div>}
@@ -231,7 +230,7 @@ function App() {
           ))}
         </div>
         <div>
-          <button onClick={() => checkTopScore(difficulty)}>
+          <button onClick={() => checkTopScore(gameConfig.difficulty)}>
             Zapisz
           </button>
         </div>
