@@ -1,6 +1,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f5f5f5;
+  background-color: #121212;
+  color: #e0e0e0;
   margin: 0;
   padding: 20px;
 }
@@ -15,10 +16,10 @@ body {
 .App {
   text-align: center;
   margin: 0 auto;
-  background: white;
+  background-color: #1e1e1e;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
   display: inline-block;
   overflow-x: auto;
 }
@@ -63,7 +64,7 @@ body {
 .mine-count.mine-3 { color: red; }
 .mine-count.mine-4 { color: purple; }
 .mine-count.mine-5 { color: yellow; }
-.mine-count.mine-6 { color: orange; }
+.mine-count.mine-6 { color: #dd3e0e; }
 .mine-count.mine-7 { color: black; }
 .mine-count.mine-8 { color: gray; }
 
@@ -80,14 +81,14 @@ body {
   width: 30px;
   height: 30px;
   margin: 1px;
-  background-color: #999;
+  background-color: #3a3a3a;
   border: none;
   cursor: pointer;
   font-size: 16px;
   line-height: 30px;
   padding: 0;
   font-weight: bold;
-  border-radius: 4px;
+  border-radius: 2px;
   transition: background 0.2s ease;
 }
 
@@ -96,7 +97,55 @@ body {
 }
 
 .cell-revealed {
-  background-color: #ddd !important;
+  background-color: #aaa !important;
+}
+
+.cell-revealed.has-mine {
+  background: radial-gradient(circle, #f8d409 0%, #e79416 50%, #940101 100%);
+  color: white;
+  animation: shake 0.4s;
+  box-shadow: 0 0 10px #ff0000;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  20% { transform: translate(-2px, 0px) rotate(-1deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  60% { transform: translate(-1px, 2px) rotate(0deg); }
+  80% { transform: translate(1px, 1px) rotate(1deg); }
+  100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+.cell-revealed.mine-1 {
+  background: radial-gradient(circle, #a0b4ff 0%, #aaa 100%);
+}
+
+.cell-revealed.mine-2 {
+  background: radial-gradient(circle, #a0ffaf 0%, #aaa 100%);
+}
+
+.cell-revealed.mine-3 {
+  background: radial-gradient(circle, #ffa0a0 0%, #aaa 100%);
+}
+
+.cell-revealed.mine-4 {
+  background: radial-gradient(circle, #dab0ff 0%, #aaa 100%);
+}
+
+.cell-revealed.mine-5 {
+  background: radial-gradient(circle, #fff5a0 0%, #aaa 100%);
+}
+
+.cell-revealed.mine-6 {
+  background: radial-gradient(circle, #ffbb7c 0%, #aaa 100%);
+}
+
+.cell-revealed.mine-7 {
+  background: radial-gradient(circle, #d0d0d0 0%, #aaa 100%);
+}
+
+.cell-revealed.mine-8 {
+  background: radial-gradient(circle, #c0c0c0 0%, #aaa 100%);
 }
 
 .cell-flagged {
@@ -107,7 +156,7 @@ body {
   margin-top: 20px;
   font-size: 20px;
   font-weight: bold;
-  color: #333;
+  color: #ffffff;
 }
 
 button {
@@ -115,17 +164,17 @@ button {
   margin: 5px;
   border: none;
   border-radius: 5px;
-  background-color: #1976d2;
-  color: white;
+  background-color: #333;
+  color: #e0e0e0;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #1565c0;
+  background-color: #444;
 }
 
 .difficultyButton {
-  background-color: #555;
+  background-color: #3a3a3a;
 }
 
 .difficultyButton:hover {
@@ -137,9 +186,11 @@ button:hover {
 }
 
 .custom-difficulty-form input {
-  margin: 5px;
-  padding: 5px;
-  width: 60px;
+  background-color: #222;
+  color: #ddd;
+  border: 1px solid #555;
+  margin-bottom: 6px;
+  padding: 4px;
 }
 
 .custom-difficulty-form button {
@@ -147,7 +198,42 @@ button:hover {
 }
 
 .error-message {
-  color: red;
+  color: #ff6b6b;
   font-weight: bold;
   margin-bottom: 10px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-left,
+.nav-right {
+  font-weight: bold;
+  min-width: 100px;
+  text-align: center;
+}
+
+.nav-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.difficulty-menu {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.restart-button {
+  margin-top: 10px;
+  font-size: 20px;
 }
