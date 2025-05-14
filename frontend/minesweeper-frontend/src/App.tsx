@@ -104,15 +104,27 @@ function App() {
       setErrorMessage('Liczba min musi być mniejsza niż liczba wszystkich pól.');
       return;
     }
-
+    localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows: customRows, cols: customCols, mines: customMines }));
     setGameConfig({ rows: customRows, cols: customCols, mines: customMines });
+
     setErrorMessage('');
     setShowCustomDifficultyMenu(false);
     setShowDifficultyMenu(false);
   };
 
+  const setDifficulty = (rows: number, cols: number, mines: number) => {
+    setGameConfig({ rows, cols, mines });
+    setShowDifficultyMenu(false);
+    localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows, cols, mines }));
+  }
+
 
   useEffect(() => {
+    const savedConfig = localStorage.getItem('minesweeperDifficulty');
+    if (savedConfig) {
+      setGameConfig(JSON.parse(savedConfig));
+    }
+
     let interval: NodeJS.Timeout | null = null;
 
     if (gameStatus === 'IN_PROGRESS') {
@@ -131,9 +143,9 @@ function App() {
       <button onClick={() => setShowDifficultyMenu(true)}>Poziom trudności</button>
       {showDifficultyMenu &&
         <div>
-          <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 9, cols: 9, mines: 10 }); setShowDifficultyMenu(false); }}>Łatwy</button>
-          <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 16, cols: 16, mines: 40 }); setShowDifficultyMenu(false); }}>Średni</button>
-          <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 16, cols: 30, mines: 99 }); setShowDifficultyMenu(false); }}>Trudny</button>
+          <button className='difficultyButton' onClick={() => setDifficulty(9, 9, 10)}>Łatwy</button>
+          <button className='difficultyButton' onClick={() => setDifficulty(16, 16, 40)}>Średni</button>
+          <button className='difficultyButton' onClick={() => setDifficulty(16, 30, 99)}>Trudny</button>
           <button className='difficultyButton' onClick={() => setShowCustomDifficultyMenu(true)}>Własny</button>
           {
             showCustomDifficultyMenu && <div id='customDifficultyForm'>
