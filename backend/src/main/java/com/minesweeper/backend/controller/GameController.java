@@ -2,6 +2,7 @@ package com.minesweeper.backend.controller;
 
 import com.minesweeper.backend.model.GameState;
 import com.minesweeper.backend.service.GameService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -12,7 +13,12 @@ import java.util.Map;
 @RequestMapping("/api/game")
 public class GameController {
 
-    private final GameService gameService = new GameService();
+    private final GameService gameService;
+
+    @Autowired
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @PostMapping("/start")
     public GameState startNewGame(@RequestBody StartRequest request) {
@@ -27,6 +33,17 @@ public class GameController {
     @PostMapping("/flag")
     public GameState click(@RequestBody FlagRequest request) {
         return gameService.flagCell(request.row, request.col);
+    }
+
+    @GetMapping("/savedata")
+    public int getSavedGameState() {
+        try {
+            gameService.saveScore("TestFromBrowser",12,"easy");
+        }catch (Exception e){
+            e.printStackTrace();
+            return 1;
+        }
+        return 0;
     }
 
     //for some debugging - will be removed later

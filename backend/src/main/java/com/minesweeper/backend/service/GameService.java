@@ -1,11 +1,17 @@
 package com.minesweeper.backend.service;
 
 import com.minesweeper.backend.model.GameState;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@Service
 public class GameService {
 
     private GameState currentGame;
@@ -155,5 +161,23 @@ public class GameService {
 
     public GameState getCurrentGame() {
         return currentGame;
+    }
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    public void saveScore(String name, double time, String difficulty) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = now.format(formatter);
+
+        switch (difficulty) {
+            case "easy" -> jdbcTemplate.update("INSERT INTO easy_scores (name, time, date) VALUES (?, ?, ?)",
+                    name, time, formattedDate);
+            case "medium" -> jdbcTemplate.update("INSERT INTO medium_scores (name, time, date) VALUES (?, ?, ?)",
+                    name, time, formattedDate);
+            case "hard" -> jdbcTemplate.update("INSERT INTO hard_scores (name, time, date) VALUES (?, ?, ?)",
+                    name, time, formattedDate);
+        }
     }
 }
