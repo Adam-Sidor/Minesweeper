@@ -1,5 +1,26 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+.app-wrapper {
+  text-align: center;
+  overflow-x: auto;
+  padding: 10px;
+}
+
+
 .App {
   text-align: center;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+  overflow-x: auto;
 }
 
 .App-logo {
@@ -10,6 +31,15 @@
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -37,17 +67,9 @@
 .mine-count.mine-7 { color: black; }
 .mine-count.mine-8 { color: gray; }
 
-.game-over {
-  margin-top: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #444;
-}
-
-
 .board-container {
   display: inline-block;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .board-row {
@@ -64,48 +86,68 @@
   font-size: 16px;
   line-height: 30px;
   padding: 0;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.cell-button:hover:not(:disabled) {
+  background-color: #bbb;
 }
 
 .cell-revealed {
-  background-color: #ddd;
+  background-color: #ddd !important;
 }
 
 .cell-flagged {
   background-color: #999;
 }
 
-.difficultyButton {
-  margin: 5px;
+.game-over {
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
 }
 
-.customDifficultyForm {
+button {
+  padding: 8px 12px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1976d2;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
+
+.difficultyButton {
+  background-color: #555;
+}
+
+.difficultyButton:hover {
+  background-color: #444;
+}
+
+.custom-difficulty-form {
   margin-top: 10px;
 }
 
-.customDifficultyForm input {
-  display: block;
-  margin-bottom: 5px;
+.custom-difficulty-form input {
+  margin: 5px;
+  padding: 5px;
+  width: 60px;
 }
 
-.customDifficultyForm button {
+.custom-difficulty-form button {
   margin-top: 5px;
 }
 
 .error-message {
   color: red;
-}
-
-.game-over {
-  margin-top: 20px;
   font-weight: bold;
-}
-
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  margin-bottom: 10px;
 }
