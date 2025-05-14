@@ -26,6 +26,12 @@ function App() {
   const [showCustomDifficultyMenu, setShowCustomDifficultyMenu] = useState(false);
   const [gameConfig, setGameConfig] = useState({ rows: 8, cols: 8, mines: 10 });
 
+  const [customRows, setCustomRows] = useState(8);
+  const [customCols, setCustomCols] = useState(8);
+  const [customMines, setCustomMines] = useState(10);
+  const [errorMessage, setErrorMessage] = useState('');
+
+
   const getColor = (n: number): string => {
     switch (n) {
       case 1: return 'blue';
@@ -76,6 +82,36 @@ function App() {
     setRemainingMines(res.data.remainingMines);
   };
 
+  const applyCustomDifficulty = () => {
+    const totalCells = customRows * customCols;
+
+    if (customRows < 2 || customCols < 2) {
+      setErrorMessage('Plansza musi mieć co najmniej 2x2 pola.');
+      return;
+    }
+
+    if (customRows > 50 || customCols > 50) {
+      setErrorMessage('Plansza może mieć maksymalnie 50x50 pól.');
+      return;
+    }
+
+    if (customMines < 1) {
+      setErrorMessage('Musi być przynajmniej 1 mina.');
+      return;
+    }
+
+    if (customMines >= totalCells) {
+      setErrorMessage('Liczba min musi być mniejsza niż liczba wszystkich pól.');
+      return;
+    }
+
+    setGameConfig({ rows: customRows, cols: customCols, mines: customMines });
+    setErrorMessage('');
+    setShowCustomDifficultyMenu(false);
+    setShowDifficultyMenu(false);
+  };
+
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
@@ -98,13 +134,17 @@ function App() {
           <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 9, cols: 9, mines: 10 }); setShowDifficultyMenu(false); }}>Łatwy</button>
           <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 16, cols: 16, mines: 40 }); setShowDifficultyMenu(false); }}>Średni</button>
           <button className='difficultyButton' onClick={() => { setGameConfig({ rows: 16, cols: 30, mines: 99 }); setShowDifficultyMenu(false); }}>Trudny</button>
-          <button className='difficultyButton' onClick={() =>  setShowCustomDifficultyMenu(true) }>Własny</button>
+          <button className='difficultyButton' onClick={() => setShowCustomDifficultyMenu(true)}>Własny</button>
           {
             showCustomDifficultyMenu && <div id='customDifficultyForm'>
-              <input type="number" onChange={e => setGameConfig({ ...gameConfig, rows: +e.target.value })} />
-              <input type="number" onChange={e => setGameConfig({ ...gameConfig, cols: +e.target.value })} />
-              <input type="number" onChange={e => setGameConfig({ ...gameConfig, mines: +e.target.value })} />
-              <button className='difficultyButton' onClick={() => { setShowCustomDifficultyMenu(false); setShowDifficultyMenu(false); }}>Zamknij</button>
+              <div style={{ color: 'red' }}>{errorMessage}</div>
+              Wiersze
+              <input type="number" min='2' max='50' onChange={e => setCustomRows(+e.target.value)} />
+              Kolumny
+              <input type="number" min='2' max='50' onChange={e => setCustomCols(+e.target.value)} />
+              Miny
+              <input type="number" min='1' onChange={e => setCustomMines(+e.target.value)} />
+              <button onClick={() => applyCustomDifficulty()}>Zatwierdź</button>
             </div>
           }
         </div>}
