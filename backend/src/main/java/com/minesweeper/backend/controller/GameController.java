@@ -35,15 +35,14 @@ public class GameController {
         return gameService.flagCell(request.row, request.col);
     }
 
-    @GetMapping("/savedata")
-    public int getSavedGameState() {
-        try {
-            gameService.saveScore("TestFromBrowser",12,"easy");
-        }catch (Exception e){
-            e.printStackTrace();
-            return 1;
-        }
-        return 0;
+    @PostMapping("/savescore")
+    public void saveScore(@RequestBody ScoreRequest request) {
+        gameService.saveScore(request.name,gameService.getCurrentGame().getElapsedTime(),request.difficulty);
+    }
+
+    @PostMapping("/istopscore")
+    public boolean checkTopScores(@RequestBody ScoreRequest request) {
+        return gameService.checkTopScore(request.difficulty);
     }
 
     //for some debugging - will be removed later

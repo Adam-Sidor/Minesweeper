@@ -170,14 +170,22 @@ public class GameService {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDate = now.format(formatter);
-
-        switch (difficulty) {
-            case "easy" -> jdbcTemplate.update("INSERT INTO easy_scores (name, time, date) VALUES (?, ?, ?)",
-                    name, time, formattedDate);
-            case "medium" -> jdbcTemplate.update("INSERT INTO medium_scores (name, time, date) VALUES (?, ?, ?)",
-                    name, time, formattedDate);
-            case "hard" -> jdbcTemplate.update("INSERT INTO hard_scores (name, time, date) VALUES (?, ?, ?)",
-                    name, time, formattedDate);
+        try{
+            switch (difficulty) {
+                case "easy" -> jdbcTemplate.update("INSERT INTO easy_scores (name, time, date) VALUES (?, ?, ?)",
+                        name, time, formattedDate);
+                case "medium" -> jdbcTemplate.update("INSERT INTO medium_scores (name, time, date) VALUES (?, ?, ?)",
+                        name, time, formattedDate);
+                case "hard" -> jdbcTemplate.update("INSERT INTO hard_scores (name, time, date) VALUES (?, ?, ?)",
+                        name, time, formattedDate);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+    }
+
+    public boolean checkTopScore(String difficulty) {
+        Random random = new Random();
+        return random.nextBoolean();
     }
 }

@@ -15,10 +15,12 @@ type Board = Cell[][];
 
 type RemainingMines = 0;
 
+
 function App() {
   const [board, setBoard] = useState<Board>([]);
   const [gameStatus, setGameStatus] = useState<GameStatus>();
   const [remainingMines, setRemainingMines] = useState<RemainingMines>();
+  const [isTopScore, setIsTopScore] = useState(false);
   const [time, setTime] = useState(0);
 
   const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
@@ -29,6 +31,9 @@ function App() {
   const [customCols, setCustomCols] = useState(8);
   const [customMines, setCustomMines] = useState(10);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [difficulty, setDifficulty] = useState('');
+  const [name, setName] = useState('');
 
   const startGame = useCallback(async () => {
     try {
@@ -63,6 +68,16 @@ function App() {
     setRemainingMines(res.data.remainingMines);
   };
 
+  const setScore = async (name: string, difficulty: string) => {
+    await axios.post('http://localhost:8080/api/game/savescore', { name, difficulty });
+    setIsTopScore(false);
+  };
+
+  const checkTopScore = async (difficulty: string) => {
+    const res = await axios.post('http://localhost:8080/api/game/istopscore', { difficulty });
+    setIsTopScore(res.data);
+  };
+
   const applyCustomDifficulty = () => {
     const totalCells = customRows * customCols;
 
@@ -93,9 +108,10 @@ function App() {
     setShowDifficultyMenu(false);
   };
 
-  const setDifficulty = (rows: number, cols: number, mines: number) => {
+  const setDifficultyLevel = (rows: number, cols: number, mines: number, difficulty: string) => {
     setGameConfig({ rows, cols, mines });
     setShowDifficultyMenu(false);
+    setDifficulty(difficulty);
     localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows, cols, mines }));
   }
 
@@ -137,9 +153,9 @@ function App() {
             <button onClick={() => setShowDifficultyMenu(!showDifficultyMenu)}>Poziom trudności</button>
             {showDifficultyMenu &&
               <div>
-                <button className='difficultyButton' onClick={() => setDifficulty(9, 9, 10)}>Łatwy</button>
-                <button className='difficultyButton' onClick={() => setDifficulty(16, 16, 40)}>Średni</button>
-                <button className='difficultyButton' onClick={() => setDifficulty(16, 30, 99)}>Trudny</button>
+                <button className='difficultyButton' onClick={() => setDifficultyLevel(9, 9, 10, "easy")}>Łatwy</button>
+                <button className='difficultyButton' onClick={() => setDifficultyLevel(16, 16, 40, "medium")}>Średni</button>
+                <button className='difficultyButton' onClick={() => setDifficultyLevel(16, 30, 99, "hard")}>Trudny</button>
                 <button className='difficultyButton' onClick={() => setShowCustomDifficultyMenu(true)}>Własny</button>
                 {showCustomDifficultyMenu && (
                   <div className='custom-difficulty-form'>
@@ -173,6 +189,16 @@ function App() {
             {time} sec
           </div>
         </nav>
+        {isTopScore && <div className='top-score-form'>
+          <label>Twoja nazwa</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <button onClick={() => setScore(name, difficulty)}>Potwierdź</button>
+        </div>}
         <div className='game-over-banner'>
           {gameStatus === 'WON' && <div className="status-banner success">🎉 Gratulacje, wygrałeś!</div>}
           {gameStatus === 'LOST' && <div className="status-banner fail">💥 Przegrałeś! Spróbuj ponownie.</div>}
@@ -204,6 +230,12 @@ function App() {
             </div>
           ))}
         </div>
+        <div>
+          <button onClick={() => checkTopScore(difficulty)}>
+            Zapisz
+          </button>
+        </div>
+
       </div>
     </div>
   );
