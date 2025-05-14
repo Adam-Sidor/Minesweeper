@@ -146,7 +146,7 @@ public class GameService {
 
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                if(currentGame.getCell(r,c).hasMine){
+                if(currentGame.getCell(r,c).hasMine && currentGame.getCell(r,c).state != GameState.CellState.FLAGGED){
                     currentGame.getCell(r,c).setState(GameState.CellState.REVEALED);
                 }
             }

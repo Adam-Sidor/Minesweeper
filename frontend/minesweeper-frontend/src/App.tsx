@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -30,28 +30,26 @@ function App() {
   const [customMines, setCustomMines] = useState(10);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const startGame = async () => {
+  const startGame = useCallback(async () => {
     try {
       const res = await axios.post('http://localhost:8080/api/game/start', gameConfig);
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
       setRemainingMines(res.data.remainingMines);
       setTime(0);
+      setHasStarted(false);
     } catch (error) {
       console.error("Error starting the game:", error);
     }
-  };
+  }, [gameConfig]);
 
   const revealCell = async (row: number, col: number) => {
     try {
       const res = await axios.post('http://localhost:8080/api/game/reveal', { row, col });
       setBoard(res.data.board);
       setGameStatus(res.data.status);
-
-      if (res.data.status === 'LOST') {
-        alert('Game Over! You hit a mine!');
-      } else if (res.data.status === 'WON') {
-        alert('Congratulations! You won the game!');
+      if (!hasStarted) {
+        setHasStarted(true);
       }
     } catch (error) {
       console.error("Error revealing cell:", error);
@@ -101,25 +99,31 @@ function App() {
     localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows, cols, mines }));
   }
 
-
   useEffect(() => {
     const savedConfig = localStorage.getItem('minesweeperDifficulty');
     if (savedConfig) {
       setGameConfig(JSON.parse(savedConfig));
     }
+  }, []);
 
+  useEffect(() => {
+    startGame();
+  }, [gameConfig, startGame]);
+
+  const [hasStarted, setHasStarted] = useState(false);
+
+  useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (gameStatus === 'IN_PROGRESS') {
+    if (hasStarted && gameStatus === 'IN_PROGRESS') {
       interval = setInterval(() => {
         setTime(prevTime => prevTime + 1);
       }, 1000);
     }
-
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [gameStatus]);
+  }, [hasStarted, gameStatus]);
   return (
     <div className='app-wrapper'>
       <div className="App">
@@ -137,18 +141,27 @@ function App() {
                 <button className='difficultyButton' onClick={() => setDifficulty(16, 16, 40)}>Średni</button>
                 <button className='difficultyButton' onClick={() => setDifficulty(16, 30, 99)}>Trudny</button>
                 <button className='difficultyButton' onClick={() => setShowCustomDifficultyMenu(true)}>Własny</button>
-                {
-                  showCustomDifficultyMenu && <div className='custom-difficulty-form'>
-                    <div className='error-message'>{errorMessage}</div>
-                    Wiersze
-                    <input type="number" min='2' max='50' onChange={e => setCustomRows(+e.target.value)} />
-                    Kolumny
-                    <input type="number" min='2' max='50' onChange={e => setCustomCols(+e.target.value)} />
-                    Miny
-                    <input type="number" min='1' onChange={e => setCustomMines(+e.target.value)} />
-                    <button onClick={() => applyCustomDifficulty()}>Zatwierdź</button>
+                {showCustomDifficultyMenu && (
+                  <div className='custom-difficulty-form'>
+                    {errorMessage && <div className='error-message'>{errorMessage}</div>}
+                    <div className="form-row">
+                      <label>Wiersze</label>
+                      <input type="number" min='2' max='50' onChange={e => setCustomRows(+e.target.value)} />
+                    </div>
+                    <div className="form-row">
+                      <label>Kolumny</label>
+                      <input type="number" min='2' max='50' onChange={e => setCustomCols(+e.target.value)} />
+                    </div>
+                    <div className="form-row">
+                      <label>Miny</label>
+                      <input type="number" min='1' onChange={e => setCustomMines(+e.target.value)} />
+                    </div>
+                    <div className="form-footer">
+                      <button onClick={applyCustomDifficulty}>Zatwierdź</button>
+                    </div>
                   </div>
-                }
+                )}
+
               </div>}
             <button onClick={startGame}>
               {gameStatus === 'IN_PROGRESS' ? '😄' :
@@ -160,6 +173,10 @@ function App() {
             {time} sec
           </div>
         </nav>
+        <div className='game-over-banner'>
+          {gameStatus === 'WON' && <div className="status-banner success">🎉 Gratulacje, wygrałeś!</div>}
+          {gameStatus === 'LOST' && <div className="status-banner fail">💥 Przegrałeś! Spróbuj ponownie.</div>}
+        </div>
         <div className='board-container'>
           {board.map((row, r) => (
             <div key={r} className='board-row'>
@@ -174,22 +191,18 @@ function App() {
                   disabled={gameStatus !== 'IN_PROGRESS'}
                   className={`cell-button ${cell.state === 'REVEALED' ? 'cell-revealed' : ''} ${cell.state === 'REVEALED' && cell.hasMine ? 'has-mine' : ''} ${cell.state === 'REVEALED' && cell.adjacentMines ? `mine-${cell.adjacentMines}` : ''}`}
                 >
-                  {cell.hasMine && gameStatus === 'LOST' ? '💣' :
-                    cell.state === 'REVEALED' && cell.adjacentMines > 0 ? (
-                      <span className={`mine-count mine-${cell.adjacentMines}`}>
-                        {cell.adjacentMines}
-                      </span>
+                  {cell.hasMine && gameStatus === 'LOST' && cell.state === 'REVEALED' ? '💥' :
+                    cell.hasMine && gameStatus === 'LOST' && cell.state === 'FLAGGED' ? '💣' :
+                      cell.state === 'REVEALED' && cell.adjacentMines > 0 ? (
+                        <span className={`mine-count mine-${cell.adjacentMines}`}>
+                          {cell.adjacentMines}
+                        </span>
 
-                    ) : cell.state === 'FLAGGED' ? '🚩' : ''}
+                      ) : cell.state === 'FLAGGED' ? '🚩' : ''}
                 </button>
               ))}
             </div>
           ))}
-        </div>
-        <div className='game-status'>
-          {gameStatus === 'LOST' && <div className="game-over">Game Over! You hit a mine!</div>}
-          {gameStatus === 'WON' && <div className="game-over">Congratulations! You won!</div>}
-          {gameStatus === 'IN_PROGRESS' && <div className="game-over">Game in progress</div>}
         </div>
       </div>
     </div>

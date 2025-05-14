@@ -152,12 +152,25 @@ body {
   background-color: #999;
 }
 
-.game-over {
-  margin-top: 20px;
-  font-size: 20px;
+.status-banner {
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 18px;
   font-weight: bold;
-  color: #ffffff;
+  border-radius: 5px;
+  text-align: center;
 }
+
+.status-banner.success {
+  background-color: #2e7d32;
+  color: #c8e6c9;
+}
+
+.status-banner.fail {
+  background-color: #b71c1c;
+  color: #ffcdd2;
+}
+
 
 button {
   padding: 8px 12px;
@@ -237,3 +250,42 @@ button:hover {
   margin-top: 10px;
   font-size: 20px;
 }
+
+.custom-difficulty-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  background-color: #2a2a2a;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-row label {
+  font-weight: bold;
+  margin-bottom: 4px;
+  width: 120px;
+  text-align: left;
+}
+
+.form-row input {
+  width: 120px;
+  padding: 4px;
+  background-color: #222;
+  color: #ddd;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+.form-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
