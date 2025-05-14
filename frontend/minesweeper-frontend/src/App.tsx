@@ -148,8 +148,8 @@ function App() {
           <button className='difficultyButton' onClick={() => setDifficulty(16, 30, 99)}>Trudny</button>
           <button className='difficultyButton' onClick={() => setShowCustomDifficultyMenu(true)}>Własny</button>
           {
-            showCustomDifficultyMenu && <div id='customDifficultyForm'>
-              <div style={{ color: 'red' }}>{errorMessage}</div>
+            showCustomDifficultyMenu && <div className='custom-difficulty-form'>
+              <div className='error-message'>{errorMessage}</div>
               Wiersze
               <input type="number" min='2' max='50' onChange={e => setCustomRows(+e.target.value)} />
               Kolumny
@@ -166,9 +166,9 @@ function App() {
       </button>
       <div>Mines left: {remainingMines}</div>
       <div>Time: {time} sec</div>
-      <div style={{ display: 'inline-block', marginTop: '10px' }}>
+      <div className='board-container'>
         {board.map((row, r) => (
-          <div key={r} style={{ display: 'flex' }}>
+          <div key={r} className='board-row'>
             {row.map((cell, c) => (
               <button
                 key={c}
@@ -178,25 +178,21 @@ function App() {
                   flagCell(r, c);
                 }}
                 disabled={gameStatus !== 'IN_PROGRESS'}
-                style={{
-                  width: 30,
-                  height: 30,
-                  margin: 1,
-                  backgroundColor: cell.state === 'REVEALED' ? '#ddd' : '#999',
-                }}
+                className={`cell-button ${cell.state === 'REVEALED' ? 'cell-revealed' : ''}`}
               >
                 {cell.hasMine && gameStatus === 'LOST' ? '💣' :
                   cell.state === 'REVEALED' && cell.adjacentMines > 0 ? (
-                    <span style={{ color: getColor(cell.adjacentMines) }}>
+                    <span className={`mine-count mine-${cell.adjacentMines}`}>
                       {cell.adjacentMines}
                     </span>
+
                   ) : cell.state === 'FLAGGED' ? '🚩' : ''}
               </button>
             ))}
           </div>
         ))}
       </div>
-      <div style={{ marginTop: '20px' }}>
+      <div className='game-status'>
         {gameStatus === 'LOST' && <div className="game-over">Game Over! You hit a mine!</div>}
         {gameStatus === 'WON' && <div className="game-over">Congratulations! You won!</div>}
         {gameStatus === 'IN_PROGRESS' && <div className="game-over">Game in progress</div>}

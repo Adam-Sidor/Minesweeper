@@ -28,6 +28,79 @@
   color: #61dafb;
 }
 
+.mine-count.mine-1 { color: blue; }
+.mine-count.mine-2 { color: green; }
+.mine-count.mine-3 { color: red; }
+.mine-count.mine-4 { color: purple; }
+.mine-count.mine-5 { color: yellow; }
+.mine-count.mine-6 { color: orange; }
+.mine-count.mine-7 { color: black; }
+.mine-count.mine-8 { color: gray; }
+
+.game-over {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #444;
+}
+
+
+.board-container {
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.board-row {
+  display: flex;
+}
+
+.cell-button {
+  width: 30px;
+  height: 30px;
+  margin: 1px;
+  background-color: #999;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 30px;
+  padding: 0;
+}
+
+.cell-revealed {
+  background-color: #ddd;
+}
+
+.cell-flagged {
+  background-color: #999;
+}
+
+.difficultyButton {
+  margin: 5px;
+}
+
+.customDifficultyForm {
+  margin-top: 10px;
+}
+
+.customDifficultyForm input {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.customDifficultyForm button {
+  margin-top: 5px;
+}
+
+.error-message {
+  color: red;
+}
+
+.game-over {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
