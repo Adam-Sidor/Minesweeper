@@ -65,7 +65,7 @@ function App() {
     }
   }, [gameConfig]);
 
-    const generateTestBoard = useCallback(async () => {
+  const generateTestBoard = useCallback(async () => {
     try {
       const res = await axios.post('http://localhost:8080/api/game/testboard', gameConfig);
       setBoard(res.data.board);
@@ -81,16 +81,20 @@ function App() {
 
   const revealCell = async (row: number, col: number) => {
     try {
-      const res = await axios.post('http://localhost:8080/api/game/reveal', { row, col });
+      let res;
+      if (!hasStarted) {
+        res = await axios.post('http://localhost:8080/api/game/firstreveal', { row, col });
+        setHasStarted(true);
+      } else {
+        res = await axios.post('http://localhost:8080/api/game/reveal', { row, col });
+      }
       setBoard(res.data.board);
       setGameStatus(res.data.status);
-      if (!hasStarted) {
-        setHasStarted(true);
-      }
     } catch (error) {
       console.error("Error revealing cell:", error);
     }
   };
+
 
   const flagCell = async (row: number, col: number) => {
     const res = await axios.post('http://localhost:8080/api/game/flag', { row, col });
@@ -270,11 +274,11 @@ function App() {
                     )}
 
                   </div>}
-                <button 
+                <button
                   onContextMenu={(e) => {
-                        e.preventDefault();
-                        generateTestBoard();
-                      }}
+                    e.preventDefault();
+                    generateTestBoard();
+                  }}
                   onClick={startGame}
                 >
                   {gameStatus === 'IN_PROGRESS' ? '😄' :

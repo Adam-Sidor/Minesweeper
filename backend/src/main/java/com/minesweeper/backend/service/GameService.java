@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
+
+import static java.lang.Math.abs;
 
 @Service
 public class GameService {
@@ -30,39 +32,49 @@ public class GameService {
             board.add(row);
         }
 
+        currentGame = new GameState(board, GameState.GameStatus.IN_PROGRESS,mines);
+        return currentGame;
+
+    }
+
+    public GameState firstReveal(int firstRow, int firstCol) {
+        int rows = currentGame.getBoard().size();
+        int cols = currentGame.getBoard().get(0).size();
+        int mines = this.mines;
+
         Random random = new Random();
         int placed = 0;
         while (placed < mines) {
             int r = random.nextInt(rows);
             int c = random.nextInt(cols);
-            if (!board.get(r).get(c).hasMine) {
-                board.get(r).get(c).hasMine = true;
+            if (!currentGame.getCell(r,c).hasMine && (abs(firstRow-r)>1 || abs(firstCol-c)>1)) {
+                currentGame.getCell(r,c).hasMine = true;
                 placed++;
             }
         }
 
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                if (!board.get(r).get(c).hasMine) {
+                if (!currentGame.getCell(r,c).hasMine) {
                     int count = 0;
                     for (int i = -1; i <= 1; i++) {
                         for (int j = -1; j <= 1; j++) {
                             int nr = r + i;
                             int nc = c + j;
-                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board.get(nr).get(nc).hasMine) {
+                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && currentGame.getCell(nr,nc).hasMine) {
                                 count++;
                             }
                         }
                     }
-                    board.get(r).get(c).adjacentMines = count;
+                    currentGame.getCell(r,c).adjacentMines = count;
                 }
             }
         }
-
-        currentGame = new GameState(board, GameState.GameStatus.IN_PROGRESS,mines);
+        revealCell(firstRow,firstCol);
+        currentGame.setStatus(GameState.GameStatus.IN_PROGRESS);
         return currentGame;
-
     }
+
 
     public GameState generateTestBoard() {
         List<List<GameState.Cell>> board = new ArrayList<>();

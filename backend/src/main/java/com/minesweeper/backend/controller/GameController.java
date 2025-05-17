@@ -33,8 +33,13 @@ public class GameController {
         return gameService.generateTestBoard();
     }
 
+    @PostMapping("/firstreveal")
+    public GameState firstReveal(@RequestBody RevealRequest request) {
+        return gameService.firstReveal(request.row, request.col);
+    }
+
     @PostMapping("/reveal")
-    public GameState click(@RequestBody RevealRequest request) {
+    public GameState reveal(@RequestBody RevealRequest request) {
         return gameService.revealCell(request.row, request.col);
     }
 
