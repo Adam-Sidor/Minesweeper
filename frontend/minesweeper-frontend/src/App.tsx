@@ -109,7 +109,7 @@ function App() {
 
   const applyCustomDifficulty = () => {
     const totalCells = customRows * customCols;
-
+    setIsTopScore(false);
     if (customRows < 2 || customCols < 2) {
       setErrorMessage('Plansza musi mieć co najmniej 2x2 pola.');
       return;
@@ -138,6 +138,7 @@ function App() {
   };
 
   const setDifficultyLevel = (rows: number, cols: number, mines: number, difficulty: Difficulty) => {
+    setIsTopScore(false);
     setGameConfig({ rows, cols, mines, difficulty });
     setShowDifficultyMenu(false);
     localStorage.setItem('minesweeperDifficulty', JSON.stringify({ rows, cols, mines, difficulty }));
@@ -265,7 +266,7 @@ function App() {
                 {time} sec
               </div>
             </nav>
-            {isTopScore && <div className='top-score-form'>
+            {isTopScore && gameStatus === 'WON' && <div className='top-score-form'>
               <label>Twoja nazwa</label>
               <input
                 type="text"
