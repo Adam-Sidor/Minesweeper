@@ -59,15 +59,6 @@ body {
   color: #61dafb;
 }
 
-.mine-count.mine-1 { color: blue; }
-.mine-count.mine-2 { color: green; }
-.mine-count.mine-3 { color: red; }
-.mine-count.mine-4 { color: purple; }
-.mine-count.mine-5 { color: yellow; }
-.mine-count.mine-6 { color: #dd3e0e; }
-.mine-count.mine-7 { color: black; }
-.mine-count.mine-8 { color: gray; }
-
 .board-container {
   display: inline-block;
   margin-top: 20px;
@@ -116,6 +107,15 @@ body {
   100% { transform: translate(0px, 0px) rotate(0deg); }
 }
 
+.mine-count.mine-1 { color: blue; }
+.mine-count.mine-2 { color: green; }
+.mine-count.mine-3 { color: red; }
+.mine-count.mine-4 { color: purple; }
+.mine-count.mine-5 { color: #eeca00; }
+.mine-count.mine-6 { color: #dd3e0e; }
+.mine-count.mine-7 { color: #f13d4c; }
+.mine-count.mine-8 { color: darkblue; }
+
 .cell-revealed.mine-1 {
   background: radial-gradient(circle, #a0b4ff 0%, #aaa 100%);
 }
@@ -141,11 +141,11 @@ body {
 }
 
 .cell-revealed.mine-7 {
-  background: radial-gradient(circle, #d0d0d0 0%, #aaa 100%);
+  background: radial-gradient(circle, #ff6d7c 0%, #aaa 100%);
 }
 
 .cell-revealed.mine-8 {
-  background: radial-gradient(circle, #c0c0c0 0%, #aaa 100%);
+  background: radial-gradient(circle, #a0a0ff 0%, #aaa 100%);
 }
 
 .cell-flagged {

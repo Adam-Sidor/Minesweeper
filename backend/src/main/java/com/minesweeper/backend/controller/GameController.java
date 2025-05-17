@@ -28,6 +28,11 @@ public class GameController {
         return gameService.startNewGame(request.rows, request.cols, request.mines);
     }
 
+    @PostMapping("/testboard")
+    public GameState testBoard() {
+        return gameService.generateTestBoard();
+    }
+
     @PostMapping("/reveal")
     public GameState click(@RequestBody RevealRequest request) {
         return gameService.revealCell(request.row, request.col);

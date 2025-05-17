@@ -64,6 +64,27 @@ public class GameService {
 
     }
 
+    public GameState generateTestBoard() {
+        List<List<GameState.Cell>> board = new ArrayList<>();
+        this.mines = mines;
+
+        List<GameState.Cell> row = new ArrayList<>();
+        for (int j = 0; j < 10; j++) {
+            row.add(new GameState.Cell(false, 0));
+        }
+        board.add(row);
+
+        board.get(0).get(9).hasMine = true;
+
+        for (int i = 0; i < 9; i++) {
+            board.get(0).get(i).adjacentMines = i;
+        }
+
+        currentGame = new GameState(board, GameState.GameStatus.IN_PROGRESS,mines);
+        return currentGame;
+
+    }
+
     public GameState flagCell(int row, int col){
         if (currentGame == null) return null;
 
