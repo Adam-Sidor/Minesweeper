@@ -211,7 +211,7 @@ public class GameService {
         return jdbcTemplate.query(sql, (rs, rowNum) ->
                 new Score(
                         rs.getString("name"),
-                        rs.getInt("time"),
+                        rs.getDouble("time"),
                         rs.getTimestamp("date").toLocalDateTime()
                 )
         );

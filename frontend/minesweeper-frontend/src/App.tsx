@@ -42,7 +42,7 @@ function App() {
   const [name, setName] = useState('');
 
   const [currentView, setCurrentView] = useState<'game' | 'scoreboard'>('game');
-  const [allScores, setAllScores] = useState<Record<Difficulty, Array<{ name: string; time: number }>>>({
+  const [allScores, setAllScores] = useState<Record<Difficulty, Array<{ name: string; time: number, date: string }>>>({
     easy: [],
     medium: [],
     hard: [],
@@ -100,7 +100,7 @@ function App() {
       setCurrentView('scoreboard');
       const res = await axios.post('http://localhost:8080/api/game/scores/get');
       setAllScores(res.data);
-      
+
     } catch (err) {
       console.error("Błąd przy pobieraniu wyników", err);
     }
@@ -158,6 +158,12 @@ function App() {
     startGame();
   }, [gameConfig, startGame]);
 
+  useEffect(() => {
+    if (gameStatus === 'WON') {
+      checkTopScore(gameConfig.difficulty);
+    }
+  }, [gameStatus, gameConfig]);
+
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
@@ -175,38 +181,44 @@ function App() {
   return (
     <div className='app-wrapper'>
       <div className="App">
-        <h1>Minesweeper</h1>
         {currentView === 'scoreboard' ?
           <div className='scoreboard'>
-            {(['easy', 'medium', 'hard'] as Exclude<Difficulty, 'Custom'>[]).map((level) => (
-              <div key={level} className="scoreboard-column">
-                <h2>{level === 'easy' ? 'Łatwy' : level === 'medium' ? 'Średni' : 'Trudny'}</h2>
-                {allScores[level].length === 0 ? (
-                  <p>Brak wyników.</p>
-                ) : (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Gracz</th>
-                        <th>Czas (s)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {allScores[level].map((score, idx) => (
-                        <tr key={idx}>
-                          <td>{score.name}</td>
-                          <td>{score.time}</td>
+            <h1>Tablice wyników</h1>
+            <div className='scores'>
+              {(['easy', 'medium', 'hard'] as Exclude<Difficulty, 'Custom'>[]).map((level) => (
+                <div key={level} className="scoreboard-column">
+                  <h2>{level === 'easy' ? 'Łatwy' : level === 'medium' ? 'Średni' : 'Trudny'}</h2>
+                  {allScores[level].length === 0 ? (
+                    <p>Brak wyników.</p>
+                  ) : (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Gracz</th>
+                          <th>Czas (s)</th>
+                          <th>Data</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            ))}
-
-            <button onClick={() => setCurrentView('game')}>Powrót do gry</button>
+                      </thead>
+                      <tbody>
+                        {allScores[level].map((score, idx) => (
+                          <tr key={idx}>
+                            <td>{idx + 1}</td>
+                            <td>{score.name}</td>
+                            <td>{score.time}</td>
+                            <td>{score.date}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              ))}
+            </div>
+            <button className='back-to-game' onClick={() => setCurrentView('game')}>Powrót do gry</button>
           </div> :
           <div className='game'>
+            <h1>Minesweeper</h1>
             <nav className='top-bar'>
               <div className='nav-left'>
                 Mines left: <br />
@@ -293,11 +305,6 @@ function App() {
                   ))}
                 </div>
               ))}
-            </div>
-            <div>
-              <button onClick={() => checkTopScore(gameConfig.difficulty)}>
-                Zapisz
-              </button>
             </div>
           </div>}
       </div>

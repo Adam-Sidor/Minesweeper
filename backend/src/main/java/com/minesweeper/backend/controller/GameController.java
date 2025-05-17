@@ -44,7 +44,6 @@ public class GameController {
         allScores.put("easy", gameService.getScoresFromTable("easy_scores"));
         allScores.put("medium", gameService.getScoresFromTable("medium_scores"));
         allScores.put("hard", gameService.getScoresFromTable("hard_scores"));
-        System.out.println("All scores: " + allScores.toString());
         return allScores;
     }
 

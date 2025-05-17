@@ -289,7 +289,7 @@ button:hover {
   margin-top: 10px;
 }
 
-.scoreboard {
+.scores {
   display: flex;
   justify-content: space-around;
   gap: 2rem;
@@ -297,8 +297,8 @@ button:hover {
 }
 
 .scoreboard-column {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: #3a3a3a;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
   padding: 1rem;
   border-radius: 8px;
   width: 30%;
@@ -314,7 +314,7 @@ button:hover {
 }
 
 .scoreboard-column th, .scoreboard-column td {
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   padding: 0.5rem;
   text-align: center;
 }
