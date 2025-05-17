@@ -319,3 +319,14 @@ button:hover {
   text-align: center;
 }
 
+.easy-score{
+  color: #2e7d32;
+}
+
+.medium-score{
+  color: #e79416;
+}
+
+.hard-score{
+  color: #b41010;
+}

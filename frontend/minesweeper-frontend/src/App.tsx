@@ -178,6 +178,20 @@ function App() {
   }, [gameConfig, startGame]);
 
   useEffect(() => {
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key.toLowerCase() === 'r') {
+      startGame();
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+
+  return () => {
+    window.removeEventListener('keydown', handleKeyDown);
+  };
+}, [startGame]);
+
+  useEffect(() => {
     if (gameStatus === 'WON') {
       checkTopScore(gameConfig.difficulty);
     }
@@ -206,7 +220,7 @@ function App() {
             <div className='scores'>
               {(['easy', 'medium', 'hard'] as Exclude<Difficulty, 'Custom'>[]).map((level) => (
                 <div key={level} className="scoreboard-column">
-                  <h2>{level === 'easy' ? 'Łatwy' : level === 'medium' ? 'Średni' : 'Trudny'}</h2>
+                  <h2 className={level + '-score'}>{level === 'easy' ? 'Łatwy' : level === 'medium' ? 'Średni' : 'Trudny'}</h2>
                   {allScores[level].length === 0 ? (
                     <p>Brak wyników.</p>
                   ) : (
