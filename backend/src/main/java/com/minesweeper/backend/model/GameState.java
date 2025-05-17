@@ -44,11 +44,14 @@ public class GameState {
         this.status = status;
         clearedCells = 0;
         this.remainingMines = remainingMines;
-        startTime = System.currentTimeMillis();
     }
 
     public double getElapsedTime() {
-        return endTime > 0 ? (endTime - startTime) / 1000.0 : (System.currentTimeMillis() - startTime) / 1000.0;
+        return endTime > 0 ? (endTime - startTime) / 1000.0 : 9999 / 1000.0;
+    }
+
+    public void startTimer() {
+        startTime = System.currentTimeMillis();
     }
 
     public void stopTimer() {

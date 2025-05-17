@@ -71,6 +71,7 @@ public class GameService {
             }
         }
         revealCell(firstRow,firstCol);
+        currentGame.startTimer();
         currentGame.setStatus(GameState.GameStatus.IN_PROGRESS);
         return currentGame;
     }
@@ -146,11 +147,16 @@ public class GameService {
             revealNeighbors(row, col, true);
         }
 
-        if(currentGame.getClearedCells() == rows * cols - mines){
-            currentGame.setStatus(GameState.GameStatus.WON);
-        }
+        checkWin(currentGame, rows, cols);
 
         return currentGame;
+    }
+
+    private void checkWin(GameState currentGame, int rows, int cols) {
+        if(currentGame.getClearedCells() == rows * cols - mines){
+            currentGame.setStatus(GameState.GameStatus.WON);
+            currentGame.stopTimer();
+        }
     }
 
     private void revealNeighbors(int row, int col, boolean ignoreMines) {
@@ -177,6 +183,7 @@ public class GameService {
                 }
             }
         }
+        checkWin(currentGame, rows, cols);
     }
 
     private void gameOver(int rows, int cols) {
