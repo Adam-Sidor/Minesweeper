@@ -289,3 +289,33 @@ button:hover {
   margin-top: 10px;
 }
 
+.scoreboard {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.scoreboard-column {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 30%;
+}
+
+.scoreboard-column h2 {
+  text-align: center;
+}
+
+.scoreboard-column table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.scoreboard-column th, .scoreboard-column td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: center;
+}
+

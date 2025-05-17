@@ -1,6 +1,7 @@
 package com.minesweeper.backend.service;
 
 import com.minesweeper.backend.model.GameState;
+import com.minesweeper.backend.model.Score;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -204,4 +205,16 @@ public class GameService {
         }
         return false;
     }
+
+    public List<Score> getScoresFromTable(String tableName) {
+        String sql = "SELECT name, time, date FROM " + tableName + " ORDER BY time ASC LIMIT 10";
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                new Score(
+                        rs.getString("name"),
+                        rs.getInt("time"),
+                        rs.getTimestamp("date").toLocalDateTime()
+                )
+        );
+    }
+
 }

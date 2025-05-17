@@ -1,12 +1,15 @@
 package com.minesweeper.backend.controller;
 
 import com.minesweeper.backend.model.GameState;
+import com.minesweeper.backend.model.Score;
 import com.minesweeper.backend.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -35,12 +38,22 @@ public class GameController {
         return gameService.flagCell(request.row, request.col);
     }
 
-    @PostMapping("/savescore")
+    @PostMapping("/scores/get")
+    public Map<String, List<Score>> getAllScores() {
+        Map<String, List<Score>> allScores = new HashMap<>();
+        allScores.put("easy", gameService.getScoresFromTable("easy_scores"));
+        allScores.put("medium", gameService.getScoresFromTable("medium_scores"));
+        allScores.put("hard", gameService.getScoresFromTable("hard_scores"));
+        System.out.println("All scores: " + allScores.toString());
+        return allScores;
+    }
+
+    @PostMapping("/scores/save")
     public void saveScore(@RequestBody ScoreRequest request) {
         gameService.saveScore(request.name,gameService.getCurrentGame().getElapsedTime(),request.difficulty);
     }
 
-    @PostMapping("/istopscore")
+    @PostMapping("/scores/istop")
     public boolean checkTopScores(@RequestBody ScoreRequest request) {
         return gameService.checkTopScore(request.difficulty);
     }
