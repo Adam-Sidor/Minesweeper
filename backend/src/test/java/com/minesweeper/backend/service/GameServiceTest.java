@@ -4,6 +4,8 @@ import com.minesweeper.backend.model.GameState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
@@ -64,5 +66,50 @@ class GameServiceTest {
         gameService.flagCell(0, 0);
         assertEquals(GameState.CellState.REVEALED, cell.getState());
     }
+
+    @Test
+    void testGameOverWhenMineRevealed() {
+        gameService.startNewGame(2, 2, 1);
+
+        gameService.getCurrentGame().getCell(0, 0).hasMine = true;
+
+        GameState result = gameService.revealCell(0, 0);
+
+        assertEquals(GameState.GameStatus.LOST, result.getStatus(), "Game should be lost");
+        assertEquals(GameState.CellState.REVEALED, result.getCell(0, 0).getState(), "Mine cell should be revealed");
+
+        for (List<GameState.Cell> row : result.getBoard()) {
+            for (GameState.Cell cell : row) {
+                if (cell.hasMine) {
+                    assertEquals(GameState.CellState.REVEALED, cell.getState(),"All mines should be revealed");
+                }
+            }
+        }
+    }
+
+    @Test
+    void testWinWhenAllNonMineCellsRevealed() {
+        gameService.startNewGame(2, 2, 1);
+
+        gameService.getCurrentGame().getCell(0, 0).hasMine = true;
+        gameService.getCurrentGame().getCell(0, 1).adjacentMines = 1;
+        gameService.getCurrentGame().getCell(1, 0).adjacentMines = 1;
+        gameService.getCurrentGame().getCell(1, 1).adjacentMines = 1;
+
+        gameService.revealCell(0, 1);
+        gameService.revealCell(1, 0);
+        GameState result = gameService.revealCell(1, 1);
+
+        assertEquals(GameState.GameStatus.WON, result.getStatus(), "Game should be won");
+
+        for (List<GameState.Cell> row : result.getBoard()) {
+            for (GameState.Cell cell : row) {
+                if (cell.state == GameState.CellState.REVEALED) {
+                    assertFalse(cell.hasMine,"Revealed cell should not have mine");
+                }
+            }
+        }
+    }
+
 
 }
