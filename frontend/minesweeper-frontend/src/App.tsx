@@ -18,6 +18,9 @@ type RemainingMines = 0;
 type Difficulty = 'easy' | 'medium' | 'hard' | 'custom';
 
 function App() {
+
+  const backendIP = 'localhost';
+
   const [board, setBoard] = useState<Board>([]);
   const [gameStatus, setGameStatus] = useState<GameStatus>();
   const [remainingMines, setRemainingMines] = useState<RemainingMines>();
@@ -53,7 +56,7 @@ function App() {
 
   const startGame = useCallback(async () => {
     try {
-      const res = await axios.post('http://localhost:8080/api/game/start', gameConfig);
+      const res = await axios.post('http://'+backendIP+':8080/api/game/start', gameConfig);
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
       setRemainingMines(res.data.remainingMines);
@@ -67,7 +70,7 @@ function App() {
 
   const generateTestBoard = useCallback(async () => {
     try {
-      const res = await axios.post('http://localhost:8080/api/game/testboard', gameConfig);
+      const res = await axios.post('http://'+backendIP+':8080/api/game/testboard', gameConfig);
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
       setRemainingMines(res.data.remainingMines);
@@ -83,10 +86,10 @@ function App() {
     try {
       let res;
       if (!hasStarted) {
-        res = await axios.post('http://localhost:8080/api/game/firstreveal', { row, col });
+        res = await axios.post('http://'+backendIP+':8080/api/game/firstreveal', { row, col });
         setHasStarted(true);
       } else {
-        res = await axios.post('http://localhost:8080/api/game/reveal', { row, col });
+        res = await axios.post('http://'+backendIP+':8080/api/game/reveal', { row, col });
       }
       setBoard(res.data.board);
       setGameStatus(res.data.status);
@@ -97,26 +100,26 @@ function App() {
 
 
   const flagCell = async (row: number, col: number) => {
-    const res = await axios.post('http://localhost:8080/api/game/flag', { row, col });
+    const res = await axios.post('http://'+backendIP+':8080/api/game/flag', { row, col });
     setBoard(res.data.board);
     setGameStatus(res.data.status);
     setRemainingMines(res.data.remainingMines);
   };
 
   const setScore = async (name: string, difficulty: Difficulty) => {
-    await axios.post('http://localhost:8080/api/game/scores/save', { name, difficulty });
+    await axios.post('http://'+backendIP+':8080/api/game/scores/save', { name, difficulty });
     setIsTopScore(false);
   };
 
   const checkTopScore = async (difficulty: Difficulty) => {
-    const res = await axios.post('http://localhost:8080/api/game/scores/istop', { difficulty });
+    const res = await axios.post('http://'+backendIP+':8080/api/game/scores/istop', { difficulty });
     setIsTopScore(res.data);
   };
 
   const fetchAllScores = async () => {
     try {
       setCurrentView('scoreboard');
-      const res = await axios.post('http://localhost:8080/api/game/scores/get');
+      const res = await axios.post('http://'+backendIP+':8080/api/game/scores/get');
       setAllScores(res.data);
 
     } catch (err) {
