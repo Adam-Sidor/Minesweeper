@@ -29,10 +29,12 @@ public class GameControllerTest {
         public int rows;
         public int cols;
         public int mines;
-        public StartRequest(int r, int c, int m) {
+        public String sessionId;
+        public StartRequest(String sessionId,int r, int c, int m) {
             this.rows = r;
             this.cols = c;
             this.mines = m;
+            this.sessionId = sessionId;
         }
     }
 
@@ -42,7 +44,7 @@ public class GameControllerTest {
         GameState dummyGame = new GameState(null, GameState.GameStatus.IN_PROGRESS, 10);
         when(gameService.startNewGame(sessionId,9, 9, 10)).thenReturn(dummyGame);
 
-        StartRequest request = new StartRequest(9, 9, 10);
+        StartRequest request = new StartRequest(sessionId,9, 9, 10);
 
         mockMvc.perform(post("/api/game/start")
                         .contentType(MediaType.APPLICATION_JSON)
