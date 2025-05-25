@@ -24,7 +24,7 @@ function App() {
   const getSessionId = (): string => {
     let sessionId = localStorage.getItem('sessionId');
     if (!sessionId) {
-      sessionId = crypto.randomUUID();
+      sessionId = window.crypto.randomUUID();
       localStorage.setItem('sessionId', sessionId);
     }
     return sessionId;
@@ -277,7 +277,6 @@ function App() {
           </div> :
           <div className='game'>
             <h1>Minesweeper</h1>
-            {sessionId}
             <nav className='top-bar'>
               <div className='nav-left'>
                 Mines left: <br />
