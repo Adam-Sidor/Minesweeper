@@ -38,8 +38,9 @@ public class GameControllerTest {
 
     @Test
     public void testStartNewGame() throws Exception {
+        String sessionId = "test";
         GameState dummyGame = new GameState(null, GameState.GameStatus.IN_PROGRESS, 10);
-        when(gameService.startNewGame(9, 9, 10)).thenReturn(dummyGame);
+        when(gameService.startNewGame(sessionId,9, 9, 10)).thenReturn(dummyGame);
 
         StartRequest request = new StartRequest(9, 9, 10);
 
@@ -52,10 +53,11 @@ public class GameControllerTest {
 
     @Test
     void flagCell_returnsUpdatedGameState() throws Exception {
-        FlagRequest request = new FlagRequest(1, 2);
+        String sessionId = "test";
+        FlagRequest request = new FlagRequest(sessionId,1, 2);
 
         GameState dummyGame = new GameState(null, GameState.GameStatus.IN_PROGRESS, 10);
-        when(gameService.flagCell(1, 2)).thenReturn(dummyGame);
+        when(gameService.flagCell(sessionId,1, 2)).thenReturn(dummyGame);
 
         mockMvc.perform(post("/api/game/flag")
                         .contentType(MediaType.APPLICATION_JSON)

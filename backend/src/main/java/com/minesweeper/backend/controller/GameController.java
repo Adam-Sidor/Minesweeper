@@ -25,27 +25,27 @@ public class GameController {
 
     @PostMapping("/start")
     public GameState startNewGame(@RequestBody StartRequest request) {
-        return gameService.startNewGame(request.rows, request.cols, request.mines);
+        return gameService.startNewGame(request.sessionId, request.rows, request.cols, request.mines);
     }
 
     @PostMapping("/testboard")
-    public GameState testBoard() {
-        return gameService.generateTestBoard();
+    public GameState testBoard(@RequestBody StartRequest request) {
+        return gameService.generateTestBoard(request.sessionId);
     }
 
     @PostMapping("/firstreveal")
     public GameState firstReveal(@RequestBody RevealRequest request) {
-        return gameService.firstReveal(request.row, request.col);
+        return gameService.firstReveal(request.sessionId, request.row, request.col);
     }
 
     @PostMapping("/reveal")
     public GameState reveal(@RequestBody RevealRequest request) {
-        return gameService.revealCell(request.row, request.col);
+        return gameService.revealCell(request.sessionId, request.row, request.col);
     }
 
     @PostMapping("/flag")
     public GameState click(@RequestBody FlagRequest request) {
-        return gameService.flagCell(request.row, request.col);
+        return gameService.flagCell(request.sessionId, request.row, request.col);
     }
 
     @PostMapping("/scores/get")
@@ -59,20 +59,20 @@ public class GameController {
 
     @PostMapping("/scores/save")
     public void saveScore(@RequestBody ScoreRequest request) {
-        gameService.saveScore(request.name,gameService.getCurrentGame().getElapsedTime(),request.difficulty);
+        gameService.saveScore(request.name,gameService.getCurrentGame(request.sessionId).getElapsedTime(),request.difficulty);
     }
 
     @PostMapping("/scores/istop")
     public boolean checkTopScores(@RequestBody ScoreRequest request) {
-        return gameService.checkTopScore(request.difficulty);
+        return gameService.checkTopScore(request.sessionId,request.difficulty);
     }
 
     //for some debugging - will be removed later
     @GetMapping("/showdata")
-    public Map<String, String> showData() {
+    public Map<String, String> showData(@RequestBody StartRequest request) {
         Map<String, String> response = new HashMap<>();
-        response.put("clearedCells", Integer.toString(gameService.getCurrentGame().getClearedCells()));
-        response.put("elapsedTime", Double.toString(gameService.getCurrentGame().getElapsedTime()));
+        response.put("clearedCells", Integer.toString(gameService.getCurrentGame(request.sessionId).getClearedCells()));
+        response.put("elapsedTime", Double.toString(gameService.getCurrentGame(request.sessionId).getElapsedTime()));
         return response;
     }
 }

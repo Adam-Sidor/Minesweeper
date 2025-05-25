@@ -21,6 +21,18 @@ function App() {
 
   const backendIP = 'localhost';
 
+  const getSessionId = (): string => {
+    let sessionId = localStorage.getItem('sessionId');
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem('sessionId', sessionId);
+    }
+    return sessionId;
+  };
+
+  const sessionId = getSessionId();
+
+
   const [board, setBoard] = useState<Board>([]);
   const [gameStatus, setGameStatus] = useState<GameStatus>();
   const [remainingMines, setRemainingMines] = useState<RemainingMines>();
@@ -56,7 +68,12 @@ function App() {
 
   const startGame = useCallback(async () => {
     try {
-      const res = await axios.post('http://'+backendIP+':8080/api/game/start', gameConfig);
+      const res = await axios.post('http://' + backendIP + ':8080/api/game/start', {
+        sessionId,
+        rows: gameConfig.rows,
+        cols: gameConfig.cols,
+        mines: gameConfig.mines
+      });
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
       setRemainingMines(res.data.remainingMines);
@@ -66,11 +83,16 @@ function App() {
     } catch (error) {
       console.error("Error starting the game:", error);
     }
-  }, [gameConfig]);
+  }, [sessionId, gameConfig]);
 
   const generateTestBoard = useCallback(async () => {
     try {
-      const res = await axios.post('http://'+backendIP+':8080/api/game/testboard', gameConfig);
+      const res = await axios.post('http://' + backendIP + ':8080/api/game/testboard', {
+        sessionId, 
+        rows: gameConfig.rows,
+        cols: gameConfig.cols,
+        mines: gameConfig.mines
+      });
       setBoard(res.data.board);
       setGameStatus('IN_PROGRESS');
       setRemainingMines(res.data.remainingMines);
@@ -80,16 +102,16 @@ function App() {
     } catch (error) {
       console.error("Error starting the game:", error);
     }
-  }, [gameConfig]);
+  }, [sessionId, gameConfig]);
 
   const revealCell = async (row: number, col: number) => {
     try {
       let res;
       if (!hasStarted) {
-        res = await axios.post('http://'+backendIP+':8080/api/game/firstreveal', { row, col });
+        res = await axios.post('http://' + backendIP + ':8080/api/game/firstreveal', { sessionId, row, col });
         setHasStarted(true);
       } else {
-        res = await axios.post('http://'+backendIP+':8080/api/game/reveal', { row, col });
+        res = await axios.post('http://' + backendIP + ':8080/api/game/reveal', { sessionId, row, col });
       }
       setBoard(res.data.board);
       setGameStatus(res.data.status);
@@ -100,26 +122,26 @@ function App() {
 
 
   const flagCell = async (row: number, col: number) => {
-    const res = await axios.post('http://'+backendIP+':8080/api/game/flag', { row, col });
+    const res = await axios.post('http://' + backendIP + ':8080/api/game/flag', { sessionId, row, col });
     setBoard(res.data.board);
     setGameStatus(res.data.status);
     setRemainingMines(res.data.remainingMines);
   };
 
   const setScore = async (name: string, difficulty: Difficulty) => {
-    await axios.post('http://'+backendIP+':8080/api/game/scores/save', { name, difficulty });
+    await axios.post('http://' + backendIP + ':8080/api/game/scores/save', { sessionId, name, difficulty });
     setIsTopScore(false);
   };
 
   const checkTopScore = async (difficulty: Difficulty) => {
-    const res = await axios.post('http://'+backendIP+':8080/api/game/scores/istop', { difficulty });
+    const res = await axios.post('http://' + backendIP + ':8080/api/game/scores/istop', { sessionId, difficulty });
     setIsTopScore(res.data);
   };
 
   const fetchAllScores = async () => {
     try {
       setCurrentView('scoreboard');
-      const res = await axios.post('http://'+backendIP+':8080/api/game/scores/get');
+      const res = await axios.post('http://' + backendIP + ':8080/api/game/scores/get', sessionId);
       setAllScores(res.data);
 
     } catch (err) {
@@ -181,18 +203,18 @@ function App() {
   }, [gameConfig, startGame]);
 
   useEffect(() => {
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key.toLowerCase() === 'r') {
-      startGame();
-    }
-  };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'r') {
+        startGame();
+      }
+    };
 
-  window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
-  return () => {
-    window.removeEventListener('keydown', handleKeyDown);
-  };
-}, [startGame]);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [startGame]);
 
   useEffect(() => {
     if (gameStatus === 'WON') {
@@ -255,6 +277,7 @@ function App() {
           </div> :
           <div className='game'>
             <h1>Minesweeper</h1>
+            {sessionId}
             <nav className='top-bar'>
               <div className='nav-left'>
                 Mines left: <br />
