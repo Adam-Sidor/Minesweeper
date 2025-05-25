@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import './App.css';
 
@@ -24,7 +25,8 @@ function App() {
   const getSessionId = (): string => {
     let sessionId = localStorage.getItem('sessionId');
     if (!sessionId) {
-      sessionId = window.crypto.randomUUID();
+      sessionId = "";
+      sessionId += uuidv4();
       localStorage.setItem('sessionId', sessionId);
     }
     return sessionId;
